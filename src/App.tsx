@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import useAxios from './hooks/useAxios';
+import useAxios from './hooks/useAxios/useAxios';
 
 function App() {
 	const { getData, dataResponse, error, loading } = useAxios();

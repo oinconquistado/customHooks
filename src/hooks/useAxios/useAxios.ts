@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import api from '../services/api';
+import api from '../../services/api';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 interface AxiosRequest {
@@ -14,7 +14,6 @@ const useAxios = () => {
 	const [error, setError] = useState<string>();
 	const [loading, setLoading] = useState<boolean>(false);
 	let axiosResponse: AxiosResponse;
-
 	const getData = useCallback(async (data: AxiosRequest) => {
 		try {
 			const values = Object.values(data);
