@@ -1,47 +1,49 @@
-import React, { useState, useCallback } from 'react';
-import api from '../../services/api';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { useCallback, useEffect } from 'react';
+import axios, { AxiosRequestConfig } from 'axios';
 
-interface AxiosRequest {
-	requestType: 'get' | 'post' | 'put' | 'delete' | 'update';
-	url: string;
-	options?: object;
+let axiosResponse: any;
+
+interface axiosRequestTypes extends AxiosRequestConfig {
+  delay?: number;
+  body?: any;
+  headers?: any;
 }
 
-const useAxios = () => {
-	const [dataResponse, setDataResponse] = useState<object>();
-	const [dataAxios, setDataAxios] = useState<object>();
-	const [error, setError] = useState<string>();
-	const [loading, setLoading] = useState<boolean>(false);
-	let axiosResponse: AxiosResponse;
-	const getData = useCallback(async (data: AxiosRequest) => {
-		try {
-			const values = Object.values(data);
+const useAxios = ({ url, method, params, body = null, headers = null }: axiosRequestTypes) => {
+  const { axiosData } = AxiosContext();
+  const { setDataResponse, setLoading, setError } = axiosData;
 
-			setLoading(true);
-			axiosResponse = await api({
-				method: values[0],
-				url: values[1],
-				data: values[2],
-			});
-		} catch (error) {
-			setDataAxios(undefined);
-			setDataResponse(undefined);
-			console.log(error);
-		} finally {
-			setDataAxios(axiosResponse);
-			setDataResponse(axiosResponse.data);
-			setLoading(false);
-		}
-	}, []);
+  const fetchData = useCallback(async () => {
+    try {
+      axiosResponse = await axios({
+        url: url,
+        method: method,
+        params: params,
+        data: body,
+        headers: headers,
+        baseURL: `https://bus-iot.herokuapp.com/`,
+        onUploadProgress: setLoading(true),
+      });
+    } catch (error: any) {
+      if (error.response) {
+        setDataResponse(undefined);
+        setError(error);
+      } else if (error.request) {
+        console.log(error.request);
+      } else {
+        console.log('Error', error.message);
+      }
+    } finally {
+      if (axiosResponse.status === 200) {
+        setDataResponse(axiosResponse.data);
+        setLoading(false);
+      }
+    }
+  }, []);
 
-	return {
-		getData,
-		dataAxios,
-		dataResponse,
-		error,
-		loading,
-	};
+  useEffect(() => {
+    fetchData();
+  }, [method, url, body, headers, fetchData]);
 };
 
 export default useAxios;
