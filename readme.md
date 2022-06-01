@@ -19,4 +19,6 @@
 
 ![Axios](https://badgen.net/badge/axios/v0.24.0/purple)
 
-    Make requests to the REST API by passing an object to this hook, it returns you the response, handles errors and manages the loading state. Full documentation and tests coming soon.
+    Make requests to the REST API by passing an object to this hook.
+    It returns you the response, handles errors and manages the loading state.
+    Full documentation and tests coming soon.
